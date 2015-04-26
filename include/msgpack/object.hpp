@@ -29,6 +29,7 @@
 #include <limits>
 #include <ostream>
 #include <typeinfo>
+#include <type_traits>
 
 namespace msgpack {
 
@@ -385,16 +386,22 @@ inline msgpack::object::implicit_type object::convert() const
     return msgpack::object::implicit_type(*this);
 }
 
-template <typename T>
-inline void object::convert(T& v) const
+template <class T>
+inline typename std::enable_if<!std::is_pointer<T>::value, void>::type object::convert(T& v) const
 {
     msgpack::operator>>(*this, v);
 }
 
-template <typename T>
-inline void object::convert(T* v) const
+template <class T>
+inline typename std::enable_if<std::is_pointer<T>::value, void>::type object::convert(T v) const
 {
     convert(*v);
+}
+
+template<class T, std::size_t N>
+inline void object::convert(T(&v)[N]) const
+{
+    msgpack::operator>>(*this, v);
 }
 
 template <typename T>

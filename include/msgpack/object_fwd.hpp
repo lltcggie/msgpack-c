@@ -24,6 +24,7 @@
 #include "msgpack/object.h"
 
 #include <typeinfo>
+#include <type_traits>
 
 namespace msgpack {
 
@@ -105,10 +106,12 @@ struct object {
     template <typename T>
     T as() const;
 
-    template <typename T>
-    void convert(T& v) const;
-    template <typename T>
-    void convert(T* v) const;
+    template <class T>
+    typename std::enable_if<!std::is_pointer<T>::value, void>::type convert(T& v) const;
+    template <class T>
+    typename std::enable_if<std::is_pointer<T>::value, void>::type convert(T v) const;
+    template<class T, std::size_t N>
+    void convert(T(&a)[N]) const;
 
     object();
 

@@ -17,6 +17,7 @@
 #include "adaptor/vector_char.hpp"
 #include "adaptor/msgpack_tuple.hpp"
 #include "adaptor/define.hpp"
+#include "adaptor/fix_array.hpp"
 
 #if defined(MSGPACK_USE_CPP03)
 
